@@ -40,7 +40,7 @@ async function status() {
 function showProviderStatus() {
   const data = state.capabilities;
   if (!data) return;
-  if ($('provider').value === 'codex' && !data.codexReady) notice('Для режима подписки нужен Codex CLI с входом через ChatGPT. Запусти codex login в терминале.', true);
+  if ($('provider').value === 'codex' && !data.codexReady) notice('Для режима подписки запусти npm install и npx codex login в терминале.', true);
   else if ($('provider').value === 'api' && !data.aiReady) notice('Для режима API добавь OPENAI_API_KEY и OPENAI_MODEL в локальный .env и перезапусти приложение.', true);
   else if ($('notice').classList.contains('error')) $('notice').hidden = true;
 }
