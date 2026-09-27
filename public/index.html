@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LinkedIn-помощник</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">in<span>✦</span></span><span>LinkedIn-помощник<small>Черновики под твоим контролем</small></span></div>
+      <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection-text">Проверяем подключение…</span><button id="connect" class="small secondary" type="button" hidden>Подключить</button><button id="disconnect" class="small ghost" type="button" hidden>Отключить</button></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow">Твоя мысль → твой голос → твоё решение</div>
+        <h1>Расскажи о работе.<br><em>Остальное оформим вместе.</em></h1>
+        <p>Помощник уточнит детали, предложит серьёзную и лёгкую версии поста. Финальный текст редактируешь и публикуешь только ты.</p>
+      </section>
+
+      <div id="notice" role="status" aria-live="polite" hidden></div>
+
+      <div class="ai-mode"><div><label for="provider">Режим ИИ</label><p>Можно выбрать отдельно перед каждым запросом.</p></div><select id="provider"><option value="codex">Подписка Codex</option><option value="api">OpenAI API</option></select></div>
+
+      <div class="tabs" role="tablist" aria-label="Режим работы">
+        <button class="tab active" data-tab="post" role="tab" aria-selected="true">Новый пост</button>
+        <button class="tab" data-tab="comment" role="tab" aria-selected="false">Комментарий</button>
+      </div>
+
+      <section id="post-panel" class="panel" role="tabpanel">
+        <div class="step-head"><span class="step">01</span><div><h2>Исходная заметка</h2><p>Как рассказал бы коллеге. Можно в двух предложениях.</p></div></div>
+        <label for="note">Что произошло?</label>
+        <textarea id="note" rows="6" maxlength="10000" placeholder="Например: закончил полный аудит системы. Было муторно: пришлось пройтись по инфраструктуре, доступам и наблюдаемости…"></textarea>
+        <div class="form-row"><label class="inline" for="language">Язык поста <select id="language"><option value="ru">Русский</option><option value="en">English</option></select></label><button id="questions-button" type="button" class="secondary">Уточнить детали <span aria-hidden="true">↗</span></button></div>
+
+        <div id="questions-box" class="subpanel" hidden>
+          <div class="step-head"><span class="step">02</span><div><h2>Контекст и границы</h2><p>Ответь на нужные вопросы. Секретные детали лучше опустить.</p></div></div>
+          <div id="questions-list"></div>
+          <label for="answers">Ответы и ограничения для публикации</label>
+          <textarea id="answers" rows="5" maxlength="10000" placeholder="Что можно упоминать публично? Каков реальный итог? Что точно нельзя раскрывать?"></textarea>
+          <div class="actions"><button id="drafts-button" type="button">Сделать два варианта <span aria-hidden="true">→</span></button></div>
+        </div>
+
+        <div id="drafts-box" class="subpanel" hidden>
+          <div class="step-head"><span class="step">03</span><div><h2>Выбери и отредактируй</h2><p>Проверяй каждое утверждение перед отправкой.</p></div></div>
+          <div class="draft-switch"><button id="serious-button" class="choice active" type="button">Серьёзно</button><button id="humorous-button" class="choice" type="button">С юмором</button></div>
+          <label for="draft">Текст поста</label>
+          <textarea id="draft" rows="13" maxlength="3000"></textarea>
+          <div id="checklist" class="checklist"></div>
+          <div class="publish-bar"><p>Публикация произойдёт только после нажатия кнопки и подтверждения.</p><button id="publish-button" type="button">Опубликовать в LinkedIn</button></div>
+          <p id="publish-hint" class="hint">Если LinkedIn пока не подключён, скопируй текст и опубликуй вручную.</p>
+          <button id="copy-post" type="button" class="small secondary">Скопировать текст</button>
+        </div>
+      </section>
+
+      <section id="comment-panel" class="panel" role="tabpanel" hidden>
+        <div class="step-head"><span class="step">01</span><div><h2>Пост для обсуждения</h2><p>Открой интересный пост в LinkedIn и вставь его текст. Поиск по ленте пока остаётся в LinkedIn.</p></div></div>
+        <label for="source-url">Ссылка на пост <span class="optional">необязательно</span></label>
+        <input id="source-url" type="url" placeholder="https://www.linkedin.com/posts/…">
+        <label for="source-post">Текст поста</label>
+        <textarea id="source-post" rows="7" maxlength="10000" placeholder="Вставь текст поста, чтобы комментарий опирался на его содержание"></textarea>
+        <label for="angle">Что хочешь добавить от себя? <span class="optional">необязательно</span></label>
+        <textarea id="angle" rows="3" maxlength="2000" placeholder="Например: поделиться осторожным советом про мониторинг и алерты"></textarea>
+        <div class="form-row"><label class="inline" for="comment-language">Язык <select id="comment-language"><option value="ru">Русский</option><option value="en">English</option></select></label><button id="comments-button" type="button">Предложить комментарии <span aria-hidden="true">→</span></button></div>
+        <div id="comments-box" class="subpanel" hidden><div class="step-head"><span class="step">02</span><div><h2>Варианты ответа</h2><p>Отредактируй и отправь сам после проверки.</p></div></div><div id="comment-options"></div><div id="comment-checklist" class="checklist"></div><a id="open-source" class="source-link" target="_blank" rel="noopener noreferrer" hidden>Открыть исходный пост ↗</a></div>
+      </section>
+    </main>
+
+    <footer>Заметки и черновики не сохраняются на диске. Не вставляй пароли, токены и закрытую информацию работодателя.</footer>
+  </div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
